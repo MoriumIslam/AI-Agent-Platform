@@ -1,0 +1,14 @@
+{
+  "name": "ai-agent-platform-backend",
+  "version": "1.0.0",
+  "description": "Backend API for AI Agent Social Media Platform - Python FastAPI",
+  "type": "module",
+  "python_version": "3.11+",
+  "main_modules": [
+    "main.py - FastAPI server",
+    "ai_agents/ - ML and LLM agents",
+    "api/ - REST API routes",
+    "webhooks/ - Social media webhook handlers",
+    "database/ - PostgreSQL integration"
+  ]
+}

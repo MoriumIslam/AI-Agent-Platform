@@ -1,0 +1,885 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>AI Agent Platform - Live Demo</title>
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      min-height: 100vh;
+      padding: 20px;
+      color: #333;
+    }
+
+    .container {
+      max-width: 1400px;
+      margin: 0 auto;
+    }
+
+    header {
+      background: white;
+      padding: 20px 30px;
+      border-radius: 10px;
+      box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+      margin-bottom: 30px;
+    }
+
+    h1 {
+      color: #667eea;
+      margin-bottom: 5px;
+    }
+
+    .status {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      color: #666;
+    }
+
+    .status-dot {
+      width: 12px;
+      height: 12px;
+      background: #4ade80;
+      border-radius: 50%;
+      animation: pulse 2s infinite;
+    }
+
+    @keyframes pulse {
+
+      0%,
+      100% {
+        opacity: 1;
+      }
+
+      50% {
+        opacity: 0.5;
+      }
+    }
+
+    .dashboard {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+      gap: 20px;
+      margin-bottom: 30px;
+    }
+
+    .card {
+      background: white;
+      padding: 25px;
+      border-radius: 10px;
+      box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+      transition: transform 0.3s ease, box-shadow 0.3s ease;
+    }
+
+    .card:hover {
+      transform: translateY(-5px);
+      box-shadow: 0 15px 40px rgba(0, 0, 0, 0.15);
+    }
+
+    .card h3 {
+      color: #667eea;
+      margin-bottom: 15px;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+
+    .metric {
+      font-size: 32px;
+      font-weight: bold;
+      color: #764ba2;
+      margin: 15px 0;
+    }
+
+    .label {
+      color: #999;
+      font-size: 14px;
+    }
+
+    .progress-bar {
+      width: 100%;
+      height: 8px;
+      background: #eee;
+      border-radius: 4px;
+      overflow: hidden;
+      margin: 10px 0;
+    }
+
+    .progress-fill {
+      height: 100%;
+      background: linear-gradient(90deg, #667eea, #764ba2);
+      width: 99.9%;
+      border-radius: 4px;
+    }
+
+    .leads-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 15px;
+      margin-top: 15px;
+    }
+
+    .lead-badge {
+      padding: 10px;
+      border-radius: 8px;
+      text-align: center;
+      font-weight: bold;
+      color: white;
+    }
+
+    .hot {
+      background: #ef4444;
+    }
+
+    .warm {
+      background: #f59e0b;
+    }
+
+    .cold {
+      background: #3b82f6;
+    }
+
+    .lead-number {
+      font-size: 24px;
+      display: block;
+      margin: 5px 0;
+    }
+
+    .messages-section {
+      background: white;
+      padding: 25px;
+      border-radius: 10px;
+      box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+      margin-bottom: 30px;
+    }
+
+    .messages-list {
+      display: flex;
+      flex-direction: column;
+      gap: 15px;
+      margin-top: 15px;
+    }
+
+    .message-item {
+      display: flex;
+      gap: 15px;
+      padding: 15px;
+      background: #f9fafb;
+      border-radius: 8px;
+      border-left: 4px solid #667eea;
+    }
+
+    .message-content {
+      flex: 1;
+    }
+
+    .message-platform {
+      font-size: 12px;
+      color: #999;
+      text-transform: uppercase;
+      font-weight: bold;
+    }
+
+    .message-text {
+      color: #333;
+      margin: 8px 0;
+    }
+
+    .score-badge {
+      display: inline-block;
+      padding: 4px 12px;
+      border-radius: 20px;
+      font-size: 12px;
+      font-weight: bold;
+      color: white;
+      margin-right: 5px;
+    }
+
+    .score-87 {
+      background: #ef4444;
+    }
+
+    .score-75 {
+      background: #f59e0b;
+    }
+
+    .score-92 {
+      background: #ef4444;
+    }
+
+    .api-docs {
+      background: white;
+      padding: 25px;
+      border-radius: 10px;
+      box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+    }
+
+    .endpoint {
+      margin: 15px 0;
+      padding: 10px;
+      background: #f9fafb;
+      border-radius: 5px;
+      font-family: monospace;
+      font-size: 13px;
+    }
+
+    .endpoint-get {
+      color: #10b981;
+    }
+
+    .endpoint-post {
+      color: #3b82f6;
+    }
+
+    .button {
+      background: linear-gradient(135deg, #667eea, #764ba2);
+      color: white;
+      border: none;
+      padding: 12px 24px;
+      border-radius: 5px;
+      cursor: pointer;
+      font-weight: bold;
+      margin-top: 10px;
+      transition: transform 0.2s, box-shadow 0.2s;
+    }
+
+    .button:hover {
+      transform: scale(1.05);
+      box-shadow: 0 5px 15px rgba(102, 126, 234, 0.4);
+    }
+
+    .button:active {
+      transform: scale(0.98);
+    }
+
+    .button.loading {
+      opacity: 0.7;
+      cursor: not-allowed;
+      animation: pulse-button 0.6s infinite;
+    }
+
+    @keyframes pulse-button {
+
+      0%,
+      100% {
+        box-shadow: 0 0 0 0 rgba(102, 126, 234, 0.7);
+      }
+
+      50% {
+        box-shadow: 0 0 0 10px rgba(102, 126, 234, 0);
+      }
+    }
+
+    .lead-badge {
+      padding: 10px;
+      border-radius: 8px;
+      text-align: center;
+      font-weight: bold;
+      color: white;
+      cursor: pointer;
+      transition: transform 0.2s, box-shadow 0.2s, scale 0.2s;
+    }
+
+    .lead-badge:hover {
+      transform: translateY(-5px);
+      box-shadow: 0 8px 20px rgba(0, 0, 0, 0.2);
+    }
+
+    .lead-badge:active {
+      transform: translateY(-2px);
+      scale: 0.98;
+    }
+
+    .lead-badge.clicked {
+      animation: clickPulse 0.6s ease-out;
+    }
+
+    @keyframes clickPulse {
+      0% {
+        transform: scale(1);
+        box-shadow: 0 0 0 0 rgba(255, 255, 255, 0.7);
+      }
+
+      50% {
+        box-shadow: 0 0 0 15px rgba(255, 255, 255, 0);
+      }
+
+      100% {
+        transform: scale(1);
+        box-shadow: 0 0 0 0 rgba(255, 255, 255, 0);
+      }
+    }
+
+    .metric-pulse {
+      animation: numberPulse 0.5s ease-out;
+    }
+
+    @keyframes numberPulse {
+      0% {
+        transform: scale(1);
+      }
+
+      50% {
+        transform: scale(1.1);
+      }
+
+      100% {
+        transform: scale(1);
+      }
+    }
+
+    .button-spinner::after {
+      content: '';
+      display: inline-block;
+      width: 12px;
+      height: 12px;
+      border: 2px solid rgba(255, 255, 255, 0.3);
+      border-top-color: white;
+      border-radius: 50%;
+      animation: spin 0.6s linear infinite;
+      margin-left: 8px;
+      vertical-align: middle;
+    }
+
+    @keyframes spin {
+      to {
+        transform: rotate(360deg);
+      }
+    }
+
+    .lead-details {
+      background: white;
+      padding: 15px;
+      border-radius: 8px;
+      margin-top: 10px;
+      border-left: 4px solid #667eea;
+      animation: slideDown 0.3s ease-out;
+    }
+
+    @keyframes slideDown {
+      from {
+        opacity: 0;
+        transform: translateY(-10px);
+      }
+
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
+
+    .update-indicator {
+      display: inline-block;
+      width: 8px;
+      height: 8px;
+      background: #4ade80;
+      border-radius: 50%;
+      margin-left: 8px;
+      animation: blink 1s infinite;
+    }
+
+    @keyframes blink {
+
+      0%,
+      50%,
+      100% {
+        opacity: 1;
+      }
+
+      25%,
+      75% {
+        opacity: 0.3;
+      }
+    }
+
+    .footer {
+      text-align: center;
+      color: white;
+      margin-top: 30px;
+      padding: 20px;
+    }
+
+    .footer a {
+      color: white;
+      text-decoration: none;
+      font-weight: bold;
+    }
+  </style>
+</head>
+
+<body>
+  <div class="container">
+    <header>
+      <h1>🤖 AI Agent Platform - Live Demo</h1>
+      <div class="status">
+        <span class="status-dot"></span>
+        <span id="status">Connecting to backend...</span>
+      </div>
+    </header>
+
+    <div class="dashboard">
+      <div class="card">
+        <h3>📊 Messages Processed</h3>
+        <div class="metric" id="messages-count">---</div>
+        <div class="label">Total messages in queue</div>
+        <button class="button" onclick="refreshMetrics(event)">🔄 Refresh</button>
+      </div>
+
+      <div class="card">
+        <h3>🔥 Hot Leads Generated</h3>
+        <div class="metric" id="hot-leads">---</div>
+        <div class="label">High conversion probability</div>
+        <button class="button" onclick="refreshLeads(event)">👀 View Leads</button>
+      </div>
+
+      <div class="card">
+        <h3>✅ CRM Sync Success Rate</h3>
+        <div class="metric" id="sync-rate">---</div>
+        <div class="progress-bar">
+          <div class="progress-fill"></div>
+        </div>
+        <div class="label">Last sync: 2 min ago</div>
+      </div>
+
+      <div class="card">
+        <h3>⚡ Avg Response Time</h3>
+        <div class="metric" id="response-time">---</div>
+        <div class="label">ms (milliseconds)</div>
+        <div style="color: #4ade80; font-weight: bold;">Within SLA ✓</div>
+      </div>
+    </div>
+
+    <div class="messages-section">
+      <h2>💬 Latest Messages with AI Scores</h2>
+      <div class="messages-list" id="messages-list">
+        <p style="color: #999;">Loading messages...</p>
+      </div>
+    </div>
+
+    <div class="messages-section">
+      <h2>📈 Lead Distribution (Click to view details)</h2>
+      <div class="leads-grid" id="leads-dist">
+        <div class="lead-badge hot" onclick="showLeadDetails('HOT', event)">
+          <span>🔥 HOT</span>
+          <span class="lead-number" id="hot-count">---</span>
+        </div>
+        <div class="lead-badge warm" onclick="showLeadDetails('WARM', event)">
+          <span>🌤️ WARM</span>
+          <span class="lead-number" id="warm-count">---</span>
+        </div>
+        <div class="lead-badge cold" onclick="showLeadDetails('COLD', event)">
+          <span>❄️ COLD</span>
+          <span class="lead-number" id="cold-count">---</span>
+        </div>
+      </div>
+      <div id="lead-details-container"></div>
+    </div>
+
+    <div class="api-docs">
+      <h2>📚 Backend API (Running on Port 5000)</h2>
+      <div class="endpoint"><span class="endpoint-get">GET</span> http://localhost:5000/health</div>
+      <div class="endpoint"><span class="endpoint-get">GET</span> http://localhost:5000/api/messages</div>
+      <div class="endpoint"><span class="endpoint-get">GET</span> http://localhost:5000/api/leads</div>
+      <div class="endpoint"><span class="endpoint-get">GET</span> http://localhost:5000/api/metrics</div>
+      <div class="endpoint"><span class="endpoint-post">POST</span> http://localhost:5000/webhooks/instagram</div>
+      <div class="endpoint"><span class="endpoint-post">POST</span> http://localhost:5000/webhooks/twitter</div>
+      <button class="button" onclick="testAPI()">Test API Connection</button>
+    </div>
+
+    <div class="footer">
+      <p>✨ Full-Stack AI Agent Platform - Social Media Lead Management with AI Classification & CRM Sync</p>
+      <p style="margin-top: 10px; font-size: 14px;">
+        <a href="http://localhost:5000/health">Backend Health →</a> |
+        Frontend: Port 3000 | Backend: Port 5000
+      </p>
+    </div>
+  </div>
+
+  <script>
+    const API_URL = 'http://localhost:5000';
+    const API_TIMEOUT = 5000; // 5 seconds
+    let lastUpdateTime = '';
+    let retryCount = 0;
+    const errorLog = [];
+
+    // Helper: Log errors for debugging
+    function logError(type, message, error) {
+      const entry = { type, message, error: error?.message || String(error), timestamp: new Date().toLocaleTimeString() };
+      errorLog.push(entry);
+      if (errorLog.length > 50) errorLog.shift();
+      console.error(`[${type}] ${message}:`, error);
+    }
+
+    // Helper: Fetch with timeout and cache-busting
+    async function fetchWithTimeout(url, timeout = API_TIMEOUT) {
+      const controller = new AbortController();
+      const timeoutId = setTimeout(() => controller.abort(), timeout);
+      try {
+        // Add cache-busting parameter
+        const cacheUrl = url.includes('?') ? url + '&_t=' + Date.now() : url + '?_t=' + Date.now();
+        const response = await fetch(cacheUrl, {
+          signal: controller.signal,
+          cache: 'no-store',
+          headers: {
+            'Cache-Control': 'no-cache, no-store, must-revalidate',
+            'Pragma': 'no-cache',
+            'Expires': '0'
+          }
+        });
+        clearTimeout(timeoutId);
+        return response;
+      } catch (error) {
+        clearTimeout(timeoutId);
+        if (error.name === 'AbortError') throw new Error(`Request timeout after ${timeout}ms`);
+        throw error;
+      }
+    }
+
+    // Helper: Show error message
+    function showError(message) {
+      const status = document.getElementById('status');
+      status.innerHTML = `🔴 Error: ${message}`;
+      status.style.color = '#ef4444';
+      setTimeout(() => { status.style.color = '#666'; }, 10000);
+    }
+
+    // WebSocket connection for real-time updates
+    let ws = null;
+    let wsReconnectAttempts = 0;
+    const WS_URL = 'ws://localhost:5000/ws';
+
+    function connectWebSocket() {
+      try {
+        ws = new WebSocket(WS_URL);
+
+        ws.onopen = () => {
+          console.log('🟢 WebSocket connected to real-time stream');
+          wsReconnectAttempts = 0;
+          const statusEl = document.getElementById('status');
+          if (statusEl) statusEl.innerHTML = `🟢 Real-time Connected | Last: ${new Date().toLocaleTimeString()}`;
+        };
+
+        ws.onmessage = (event) => {
+          try {
+            const data = JSON.parse(event.data);
+            console.log('📥 Real-time update:', data.type, data);
+
+            // Handle metrics updates
+            if (data.type === 'metrics_update') {
+              updateMetricsFromWebSocket(data);
+            }
+          } catch (error) {
+            console.error('Error processing WebSocket message:', error);
+          }
+        };
+
+        ws.onerror = (error) => {
+          console.error('❌ WebSocket error:', error);
+          const statusEl = document.getElementById('status');
+          if (statusEl) statusEl.innerHTML = `🔴 Real-time Disconnected - Retrying...`;
+        };
+
+        ws.onclose = () => {
+          console.log('❌ WebSocket disconnected');
+          wsReconnectAttempts++;
+
+          // Retry connection with exponential backoff
+          if (wsReconnectAttempts < 5) {
+            const delay = Math.min(1000 * Math.pow(2, wsReconnectAttempts), 10000);
+            console.log(`🔄 Reconnecting in ${delay}ms (attempt ${wsReconnectAttempts})...`);
+            setTimeout(connectWebSocket, delay);
+          } else {
+            console.log('⚠️ WebSocket reconnection failed. Falling back to polling.');
+            fallbackToPolling();
+          }
+        };
+      } catch (error) {
+        console.error('Failed to create WebSocket:', error);
+        fallbackToPolling();
+      }
+    }
+
+    function updateMetricsFromWebSocket(data) {
+      // Update metrics display with real-time data
+      animateMetric('messages-count', data.messages_processed);
+      document.getElementById('messages-count').textContent = (data.messages_processed || 0).toLocaleString();
+
+      animateMetric('hot-leads', data.hot_leads_generated);
+      document.getElementById('hot-leads').textContent = Math.round(data.hot_leads_generated || 0);
+
+      document.getElementById('sync-rate').textContent = ((data.crm_sync_success || 0).toFixed(1)) + '%';
+      document.getElementById('response-time').textContent = (data.average_response_time_ms || 'N/A').toFixed(1);
+
+      // Update status with timestamp
+      lastUpdateTime = new Date().toLocaleTimeString();
+      const statusEl = document.getElementById('status');
+      if (statusEl) statusEl.innerHTML = `🟢 Real-time | Last: ${lastUpdateTime} <span class="update-indicator"></span>`;
+    }
+
+    function fallbackToPolling() {
+      console.log('📊 Falling back to polling every 3 seconds');
+      // Auto-refresh metrics every 3 seconds
+      setInterval(() => {
+        fetchMetrics();
+        fetchMessages();
+        fetchLeads();
+      }, 3000);
+    }
+
+    // Initial fetch on page load
+    window.addEventListener('load', () => {
+      // Connect to WebSocket for real-time metrics
+      connectWebSocket();
+
+      // Fetch static data (messages and leads)
+      setTimeout(() => {
+        fetchMessages();
+        fetchLeads();
+      }, 500);
+    });
+
+    // Animate metric numbers
+    function animateMetric(elementId, newValue) {
+      const element = document.getElementById(elementId);
+      if (!element) return;
+      element.classList.remove('metric-pulse');
+      void element.offsetWidth;
+      element.classList.add('metric-pulse');
+    }
+
+    async function fetchMetrics() {
+      try {
+        const response = await fetchWithTimeout(`${API_URL}/api/metrics`);
+        if (!response.ok) throw new Error(`HTTP ${response.status}: ${response.statusText}`);
+
+        const data = await response.json();
+        if (!data || typeof data !== 'object') throw new Error('Invalid response format');
+
+        console.log('✅ Metrics fetched:', data);
+
+        animateMetric('messages-count', data.messages_processed);
+        document.getElementById('messages-count').textContent = (data.messages_processed || 0).toLocaleString();
+
+        // Update last fetch time
+        lastUpdateTime = new Date().toLocaleTimeString();
+        const statusEl = document.getElementById('status');
+        if (statusEl) statusEl.innerHTML = `🟢 Live - Messages: ${data.messages_processed} | Last: ${lastUpdateTime} <span class="update-indicator"></span>`;
+
+        animateMetric('hot-leads', data.hot_leads_generated);
+        document.getElementById('hot-leads').textContent = data.hot_leads_generated || 0;
+
+        document.getElementById('sync-rate').textContent = ((data.crm_sync_success || 0).toFixed(1)) + '%';
+        document.getElementById('response-time').textContent = data.average_response_time_ms || 'N/A';
+
+        const now = new Date().toLocaleTimeString();
+        document.getElementById('status').innerHTML = '🟢 Backend Connected ✓ <span class="update-indicator"></span> Updated: ' + now;
+        lastUpdateTime = now;
+        retryCount = 0;
+      } catch (error) {
+        logError('METRICS', 'Failed to fetch metrics', error);
+        retryCount++;
+        let msg = 'Backend Disconnected';
+        if (error.message.includes('timeout')) msg = 'Request Timeout (>5s)';
+        else if (error.message.includes('Failed to fetch')) msg = 'Network Error';
+        document.getElementById('status').innerHTML = `🔴 ${msg} (Attempt ${retryCount})`;
+      }
+    }
+
+    async function fetchMessages() {
+      try {
+        const response = await fetchWithTimeout(`${API_URL}/api/messages`);
+        if (!response.ok) throw new Error(`HTTP ${response.status}`);
+
+        const data = await response.json();
+        const list = document.getElementById('messages-list');
+
+        console.log('✅ Messages fetched:', data.messages?.length || 0, 'messages');
+
+        if (!data.messages || data.messages.length === 0) {
+          list.innerHTML = '<p style="color: #999;">⏳ Waiting for messages...</p>';
+          return;
+        }
+
+        list.innerHTML = data.messages.map(msg => `
+          <div class="message-item">
+            <div class="message-content">
+              <div class="message-platform">${msg.platform || 'unknown'}</div>
+              <div class="message-text">"${(msg.text || 'No text').substring(0, 80)}..."</div>
+              <div>
+                <span class="score-badge score-${msg.score || 0}">${msg.score || 0} pts</span>
+                <span class="score-badge ${(msg.category || 'COLD').toLowerCase()}">${msg.category || 'COLD'}</span>
+              </div>
+            </div>
+          </div>
+        `).join('');
+      } catch (error) {
+        logError('MESSAGES', 'Failed to fetch messages', error);
+        const list = document.getElementById('messages-list');
+        list.innerHTML = `<p style="color: #ef4444;">❌ Error loading messages: ${error.message}</p>`;
+      }
+    }
+
+    async function fetchLeads() {
+      try {
+        const response = await fetchWithTimeout(`${API_URL}/api/leads`);
+        if (!response.ok) throw new Error(`HTTP ${response.status}`);
+
+        const data = await response.json();
+        if (!data || typeof data !== 'object') throw new Error('Invalid response');
+
+        animateMetric('hot-count', data.hot);
+        document.getElementById('hot-count').textContent = data.hot || 0;
+
+        animateMetric('warm-count', data.warm);
+        document.getElementById('warm-count').textContent = data.warm || 0;
+
+        animateMetric('cold-count', data.cold);
+        document.getElementById('cold-count').textContent = data.cold || 0;
+      } catch (error) {
+        logError('LEADS', 'Failed to fetch leads', error);
+        document.getElementById('hot-count').textContent = '✗';
+        document.getElementById('warm-count').textContent = '✗';
+        document.getElementById('cold-count').textContent = '✗';
+      }
+    }
+
+    async function refreshMetrics(event) {
+      try {
+        const button = event.target;
+        button.classList.add('loading');
+        button.innerHTML = '🔄 Refreshing' + '<span class="button-spinner"></span>';
+        button.disabled = true;
+
+        await fetchMetrics();
+
+        setTimeout(() => {
+          button.classList.remove('loading');
+          button.innerHTML = '🔄 Refresh';
+          button.disabled = false;
+        }, 1000);
+      } catch (error) {
+        logError('BUTTON', 'Refresh failed', error);
+        showError('Failed to refresh');
+      }
+    }
+
+    async function refreshLeads(event) {
+      try {
+        const button = event.target;
+        button.classList.add('loading');
+        button.innerHTML = '👀 Loading' + '<span class="button-spinner"></span>';
+        button.disabled = true;
+
+        await fetchLeads();
+
+        setTimeout(() => {
+          button.classList.remove('loading');
+          button.innerHTML = '👀 View Leads';
+          button.disabled = false;
+        }, 1000);
+      } catch (error) {
+        logError('BUTTON', 'Lead refresh failed', error);
+        showError('Failed to load leads');
+      }
+    }
+
+    function showLeadDetails(category, event) {
+      try {
+        const badge = event.currentTarget;
+        badge.classList.remove('clicked');
+        void badge.offsetWidth;
+        badge.classList.add('clicked');
+
+        const detailsContainer = document.getElementById('lead-details-container');
+        const categoryEmoji = { 'HOT': '🔥', 'WARM': '🌤️', 'COLD': '❄️' };
+        const categoryColor = { 'HOT': '#ef4444', 'WARM': '#f59e0b', 'COLD': '#3b82f6' };
+        const categoryDesc = {
+          'HOT': 'High conversion probability - Ready to sell',
+          'WARM': 'Medium conversion probability - Nurture needed',
+          'COLD': 'Low conversion probability - Long-term prospect'
+        };
+
+        const categoryCount = {
+          'HOT': document.getElementById('hot-count').textContent,
+          'WARM': document.getElementById('warm-count').textContent,
+          'COLD': document.getElementById('cold-count').textContent
+        };
+
+        detailsContainer.innerHTML = `
+          <div class="lead-details" style="border-left-color: ${categoryColor[category] || '#667eea'};">
+            <strong>${categoryEmoji[category] || '📌'} ${category} Leads Details</strong><br>
+            <div style="margin-top: 10px; color: #666;">
+              <p>📊 Total: <strong>${categoryCount[category] || 0}</strong> leads</p>
+              <p>💡 Description: ${categoryDesc[category] || 'Unknown'}</p>
+              <p style="margin-top: 8px; font-size: 12px; color: #999;">
+                ⏰ Last updated: ${new Date().toLocaleTimeString()}
+              </p>
+            </div>
+          </div>
+        `;
+      } catch (error) {
+        logError('DETAILS', 'Failed to show details', error);
+        showError('Failed to display details');
+      }
+    }
+
+    async function testAPI() {
+      try {
+        const testButton = event.target;
+        testButton.classList.add('loading');
+        testButton.innerHTML = 'Testing...' + '<span class="button-spinner"></span>';
+        testButton.disabled = true;
+
+        const endpoints = [
+          { name: 'Health', url: '/health' },
+          { name: 'Messages', url: '/api/messages' },
+          { name: 'Leads', url: '/api/leads' },
+          { name: 'Metrics', url: '/api/metrics' }
+        ];
+
+        let results = [];
+        let failedCount = 0;
+
+        for (let endpoint of endpoints) {
+          try {
+            const response = await fetchWithTimeout(`${API_URL}${endpoint.url}`);
+            if (response.ok) {
+              results.push(`✅ ${endpoint.name} (${response.status} OK)`);
+            } else {
+              results.push(`⚠️ ${endpoint.name} (${response.status} ${response.statusText})`);
+              failedCount++;
+            }
+          } catch (error) {
+            results.push(`❌ ${endpoint.name} (${error.message})`);
+            failedCount++;
+            logError('TEST', `Failed testing ${endpoint.name}`, error);
+          }
+        }
+
+        testButton.classList.remove('loading');
+        testButton.innerHTML = 'Test API Connection';
+        testButton.disabled = false;
+
+        const summary = failedCount === 0 ? '🎉 All endpoints working perfectly!' : `⚠️ ${failedCount} endpoint(s) failed`;
+        alert(`API Test Results:\n\n${results.join('\n')}\n\n${summary}`);
+      } catch (error) {
+        logError('TEST', 'API test failed', error);
+        showError('Test failed');
+      }
+    }
+
+    // Expose error log for debugging
+    window.getErrorLog = () => errorLog;
+  </script>
+</body>
+
+</html>

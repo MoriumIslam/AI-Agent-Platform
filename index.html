@@ -1,0 +1,1156 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>AI Agent Platform - Social Media Lead Management</title>
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      min-height: 100vh;
+      padding: 20px;
+    }
+
+    .container {
+      max-width: 1400px;
+      margin: 0 auto;
+    }
+
+    header {
+      background: white;
+      padding: 20px;
+      border-radius: 12px;
+      margin-bottom: 30px;
+      box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    }
+
+    header h1 {
+      color: #667eea;
+      margin-bottom: 10px;
+    }
+
+    header p {
+      color: #666;
+      font-size: 14px;
+    }
+
+    .dashboard {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+      gap: 20px;
+      margin-bottom: 30px;
+    }
+
+    .card {
+      background: white;
+      border-radius: 12px;
+      padding: 20px;
+      box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+      transition: transform 0.2s, box-shadow 0.2s;
+    }
+
+    .card:hover {
+      transform: translateY(-5px);
+      box-shadow: 0 8px 12px rgba(0, 0, 0, 0.15);
+    }
+
+    .card h3 {
+      color: #333;
+      margin-bottom: 15px;
+      font-size: 16px;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+
+    .card-icon {
+      font-size: 24px;
+    }
+
+    .metric {
+      display: flex;
+      justify-content: space-between;
+      padding: 10px 0;
+      border-bottom: 1px solid #eee;
+    }
+
+    .metric:last-child {
+      border-bottom: none;
+    }
+
+    .metric-label {
+      color: #666;
+      font-size: 14px;
+    }
+
+    .metric-value {
+      font-weight: bold;
+      color: #667eea;
+      font-size: 16px;
+    }
+
+    .status-badge {
+      display: inline-block;
+      padding: 4px 12px;
+      border-radius: 20px;
+      font-size: 12px;
+      font-weight: bold;
+      margin-top: 10px;
+    }
+
+    .status-hot {
+      background: #ff6b6b;
+      color: white;
+    }
+
+    .status-warm {
+      background: #ffd333;
+      color: #333;
+    }
+
+    .status-cold {
+      background: #4dabf7;
+      color: white;
+    }
+
+    .section {
+      background: white;
+      border-radius: 12px;
+      padding: 30px;
+      margin-bottom: 30px;
+      box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    }
+
+    .section h2 {
+      color: #333;
+      margin-bottom: 20px;
+      font-size: 20px;
+      border-bottom: 2px solid #667eea;
+      padding-bottom: 10px;
+    }
+
+    .flow-diagram {
+      display: flex;
+      align-items: center;
+      gap: 15px;
+      margin: 20px 0;
+      flex-wrap: wrap;
+    }
+
+    .flow-step {
+      background: #f0f4ff;
+      border-left: 4px solid #667eea;
+      padding: 15px;
+      border-radius: 8px;
+      flex: 1;
+      min-width: 150px;
+    }
+
+    .flow-step.ai {
+      background: #fff3e0;
+      border-left-color: #ff9800;
+    }
+
+    .flow-step.data {
+      background: #e8f5e9;
+      border-left-color: #4caf50;
+    }
+
+    .flow-arrow {
+      color: #667eea;
+      font-size: 24px;
+      margin: 0 10px;
+    }
+
+    .message-list {
+      border: 1px solid #eee;
+      border-radius: 8px;
+      overflow: hidden;
+      margin-top: 20px;
+    }
+
+    .message-item {
+      padding: 15px;
+      border-bottom: 1px solid #eee;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    .message-item:last-child {
+      border-bottom: none;
+    }
+
+    .message-content {
+      flex: 1;
+    }
+
+    .message-text {
+      color: #333;
+      font-size: 14px;
+      margin-bottom: 5px;
+    }
+
+    .message-meta {
+      color: #999;
+      font-size: 12px;
+    }
+
+    .agent-card {
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      color: white;
+      padding: 20px;
+      border-radius: 12px;
+      margin-bottom: 15px;
+    }
+
+    .agent-card h4 {
+      margin-bottom: 10px;
+    }
+
+    .agent-card p {
+      font-size: 13px;
+      opacity: 0.9;
+      line-height: 1.5;
+    }
+
+    button {
+      background: #667eea;
+      color: white;
+      border: none;
+      padding: 10px 20px;
+      border-radius: 6px;
+      cursor: pointer;
+      font-size: 14px;
+      transition: background 0.2s;
+    }
+
+    button:hover {
+      background: #764ba2;
+    }
+
+    .grid-2 {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 20px;
+      margin-top: 20px;
+    }
+
+    .grid-3 {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 20px;
+      margin-top: 20px;
+    }
+
+    @media (max-width: 768px) {
+
+      .grid-2,
+      .grid-3 {
+        grid-template-columns: 1fr;
+      }
+
+      .flow-diagram {
+        flex-direction: column;
+      }
+
+      .flow-arrow {
+        transform: rotate(90deg);
+      }
+    }
+
+    .stats-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+      gap: 15px;
+      margin-top: 20px;
+    }
+
+    .stat-box {
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      color: white;
+      padding: 15px;
+      border-radius: 8px;
+      text-align: center;
+    }
+
+    .stat-number {
+      font-size: 24px;
+      font-weight: bold;
+      margin-bottom: 5px;
+    }
+
+    .stat-label {
+      font-size: 12px;
+      opacity: 0.9;
+    }
+
+    .timeline {
+      position: relative;
+      padding: 20px 0;
+    }
+
+    .timeline-item {
+      padding: 15px;
+      padding-left: 40px;
+      border-left: 3px solid #667eea;
+      margin-bottom: 15px;
+      position: relative;
+      background: #f9f9f9;
+      border-radius: 8px;
+    }
+
+    .timeline-item::before {
+      content: '';
+      position: absolute;
+      left: -8px;
+      top: 25px;
+      width: 13px;
+      height: 13px;
+      border-radius: 50%;
+      background: #667eea;
+      border: 3px solid white;
+    }
+
+    .timeline-time {
+      font-size: 12px;
+      color: #999;
+      margin-bottom: 5px;
+    }
+
+    .timeline-title {
+      font-weight: bold;
+      color: #333;
+      margin-bottom: 5px;
+    }
+
+    .timeline-desc {
+      font-size: 13px;
+      color: #666;
+    }
+
+    footer {
+      text-align: center;
+      color: white;
+      margin-top: 40px;
+      font-size: 14px;
+    }
+  </style>
+</head>
+
+<body>
+  <div class="container">
+    <!-- Header -->
+    <header>
+      <h1>🤖 AI Agent Platform</h1>
+      <p>Intelligent Social Media Engagement & Lead Management System</p>
+    </header>
+
+    <!-- Real-Time Metrics Dashboard -->
+    <div class="dashboard">
+      <div class="card">
+        <h3><span class="card-icon">📊</span> Platform Health</h3>
+        <div class="metric">
+          <span class="metric-label">API Uptime</span>
+          <span class="metric-value">99.97%</span>
+        </div>
+        <div class="metric">
+          <span class="metric-label">Avg Latency</span>
+          <span class="metric-value">145ms</span>
+        </div>
+        <div class="metric">
+          <span class="metric-label">Error Rate</span>
+          <span class="metric-value">0.08%</span>
+        </div>
+        <div class="metric">
+          <span class="metric-label">Queue Depth</span>
+          <span class="metric-value">1,245 msgs</span>
+        </div>
+      </div>
+
+      <div class="card">
+        <h3><span class="card-icon">💬</span> Message Activity</h3>
+        <div class="metric">
+          <span class="metric-label">Processed Today</span>
+          <span class="metric-value">8,542</span>
+        </div>
+        <div class="metric">
+          <span class="metric-label">Response Rate</span>
+          <span class="metric-value">94%</span>
+        </div>
+        <div class="metric">
+          <span class="metric-label">Avg Response Time</span>
+          <span class="metric-value">4.2 sec</span>
+        </div>
+        <div class="metric">
+          <span class="metric-label">Pending Review</span>
+          <span class="metric-value">127</span>
+        </div>
+      </div>
+
+      <div class="card">
+        <h3><span class="card-icon">🎯</span> Lead Metrics</h3>
+        <div class="metric">
+          <span class="metric-label">Hot Leads</span>
+          <span class="metric-value" style="color: #ff6b6b;">324</span>
+        </div>
+        <div class="metric">
+          <span class="metric-label">Warm Leads</span>
+          <span class="metric-value" style="color: #ffd333;">892</span>
+        </div>
+        <div class="metric">
+          <span class="metric-label">Cold Leads</span>
+          <span class="metric-value" style="color: #4dabf7;">1,456</span>
+        </div>
+        <div class="metric">
+          <span class="metric-label">Accuracy</span>
+          <span class="metric-value">92%</span>
+        </div>
+      </div>
+
+      <div class="card">
+        <h3><span class="card-icon">🔄</span> CRM Sync</h3>
+        <div class="metric">
+          <span class="metric-label">Synced Today</span>
+          <span class="metric-value">645</span>
+        </div>
+        <div class="metric">
+          <span class="metric-label">Success Rate</span>
+          <span class="metric-value">99.9%</span>
+        </div>
+        <div class="metric">
+          <span class="metric-label">Avg Sync Time</span>
+          <span class="metric-value">3.2 sec</span>
+        </div>
+        <div class="metric">
+          <span class="metric-label">Connected CRMs</span>
+          <span class="metric-value">5+</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- Updated Summary with Languages -->
+    <section class="section" style="background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);">
+      <h2>✅ Updated Summary with Languages & Frameworks</h2>
+      <p style="color: #333; margin-bottom: 20px; font-weight: 500;">This design demonstrates a <strong>full-stack SaaS
+          AI agent system</strong>:</p>
+
+      <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 20px; margin-top: 20px;">
+        <!-- Frontend -->
+        <div style="background: white; padding: 20px; border-radius: 10px; border-left: 5px solid #667eea;">
+          <h4 style="color: #667eea; margin-bottom: 10px;">📱 Frontend: Dashboard & Configuration</h4>
+          <p style="color: #666; font-size: 14px; margin-bottom: 10px;"><strong>Languages/Frameworks:</strong></p>
+          <ul style="list-style: none; padding: 0; font-size: 13px;">
+            <li>✓ <strong>JavaScript / TypeScript</strong> (for type safety)</li>
+            <li>✓ <strong>React.js</strong> or <strong>Vue.js</strong> (SPA framework)</li>
+            <li>✓ <strong>TailwindCSS / Bootstrap</strong> (responsive UI)</li>
+            <li>✓ <strong>Redux / Zustand</strong> (state management)</li>
+            <li>✓ <strong>Socket.io</strong> (WebSocket real-time updates)</li>
+          </ul>
+        </div>
+
+        <!-- Backend -->
+        <div style="background: white; padding: 20px; border-radius: 10px; border-left: 5px solid #ff9800;">
+          <h4 style="color: #ff9800; margin-bottom: 10px;">⚙️ Backend: Webhook Handling & Orchestration</h4>
+          <p style="color: #666; font-size: 14px; margin-bottom: 10px;"><strong>Languages/Frameworks:</strong></p>
+          <ul style="list-style: none; padding: 0; font-size: 13px;">
+            <li>✓ <strong>Python (FastAPI / Django)</strong> or <strong>Node.js (Express)</strong></li>
+            <li>✓ <strong>TypeScript</strong> (for Node option)</li>
+            <li>✓ <strong>Prisma / Sequelize</strong> (ORM)</li>
+            <li>✓ <strong>RabbitMQ client</strong> (async messaging)</li>
+            <li>✓ <strong>Docker</strong> (containerization)</li>
+          </ul>
+        </div>
+
+        <!-- AI Layer -->
+        <div style="background: white; padding: 20px; border-radius: 10px; border-left: 5px solid #4caf50;">
+          <h4 style="color: #4caf50; margin-bottom: 10px;">🤖 AI Layer: Classification & Auto-Reply</h4>
+          <p style="color: #666; font-size: 14px; margin-bottom: 10px;"><strong>Languages/Frameworks:</strong></p>
+          <ul style="list-style: none; padding: 0; font-size: 13px;">
+            <li>✓ <strong>Python</strong> (primary AI language)</li>
+            <li>✓ <strong>PyTorch / TensorFlow</strong> (ML models)</li>
+            <li>✓ <strong>LangChain</strong> (LLM orchestration)</li>
+            <li>✓ <strong>OpenAI GPT-5-mini API</strong> (or fine-tuned models)</li>
+            <li>✓ <strong>XGBoost / scikit-learn</strong> (lead scoring)</li>
+          </ul>
+        </div>
+
+        <!-- Data Layer -->
+        <div style="background: white; padding: 20px; border-radius: 10px; border-left: 5px solid #2196f3;">
+          <h4 style="color: #2196f3; margin-bottom: 10px;">💾 Data Layer: Secure Storage</h4>
+          <p style="color: #666; font-size: 14px; margin-bottom: 10px;"><strong>Languages/Technologies:</strong></p>
+          <ul style="list-style: none; padding: 0; font-size: 13px;">
+            <li>✓ <strong>PostgreSQL / MySQL</strong> (structured data)</li>
+            <li>✓ <strong>MongoDB</strong> (unstructured messages)</li>
+            <li>✓ <strong>Redis</strong> (caching & sessions)</li>
+            <li>✓ <strong>InfluxDB</strong> (time-series metrics)</li>
+            <li>✓ <strong>S3 / Azure Blob</strong> (archival storage)</li>
+          </ul>
+        </div>
+
+        <!-- Integration -->
+        <div style="background: white; padding: 20px; border-radius: 10px; border-left: 5px solid #e91e63;">
+          <h4 style="color: #e91e63; margin-bottom: 10px;">🔗 Integration: CRM & Social Media</h4>
+          <p style="color: #666; font-size: 14px; margin-bottom: 10px;"><strong>Languages/Technologies:</strong></p>
+          <ul style="list-style: none; padding: 0; font-size: 13px;">
+            <li>✓ <strong>Python / Node.js</strong> (API clients)</li>
+            <li>✓ <strong>OAuth 2.0</strong> (secure authentication)</li>
+            <li>✓ <strong>Webhook listeners</strong> (real-time events)</li>
+            <li>✓ <strong>HubSpot, Salesforce, Pipedrive APIs</strong></li>
+            <li>✓ <strong>Meta Graph, Twitter v2, LinkedIn APIs</strong></li>
+          </ul>
+        </div>
+
+        <!-- Security & Reliability -->
+        <div style="background: white; padding: 20px; border-radius: 10px; border-left: 5px solid #f44336;">
+          <h4 style="color: #f44336; margin-bottom: 10px;">🔐 Security & Reliability</h4>
+          <p style="color: #666; font-size: 14px; margin-bottom: 10px;"><strong>Technologies:</strong></p>
+          <ul style="list-style: none; padding: 0; font-size: 13px;">
+            <li>✓ <strong>HTTPS/TLS 1.3</strong> (encryption in transit)</li>
+            <li>✓ <strong>AES-256</strong> (encryption at rest)</li>
+            <li>✓ <strong>JWT + OAuth 2.0</strong> (authentication)</li>
+            <li>✓ <strong>Role-Based Access Control (RBAC)</strong></li>
+            <li>✓ <strong>Circuit breakers & failover</strong> (resilience)</li>
+          </ul>
+        </div>
+
+        <!-- Cost Optimization -->
+        <div style="background: white; padding: 20px; border-radius: 10px; border-left: 5px solid #9c27b0;">
+          <h4 style="color: #9c27b0; margin-bottom: 10px;">💰 Cost Optimization Strategies</h4>
+          <p style="color: #666; font-size: 14px; margin-bottom: 10px;"><strong>Technologies:</strong></p>
+          <ul style="list-style: none; padding: 0; font-size: 13px;">
+            <li>✓ <strong>AWS Lambda / GCP Functions</strong> (serverless)</li>
+            <li>✓ <strong>Redis cache</strong> (60% cache hit rate)</li>
+            <li>✓ <strong>Model tiering</strong> (GPT-3.5 vs GPT-4)</li>
+            <li>✓ <strong>S3/Blob for archival</strong> (old data storage)</li>
+            <li>✓ <strong>Kubernetes auto-scaling</strong> (efficient compute)</li>
+          </ul>
+        </div>
+      </div>
+
+      <div
+        style="margin-top: 25px; background: #fff9c4; padding: 20px; border-radius: 10px; border-left: 5px solid #fbc02d;">
+        <strong style="color: #f57f17;">🎯 Key Takeaway:</strong>
+        <p style="color: #333; font-size: 14px; margin-top: 10px;">This architecture explicitly connects each system
+          component with the <strong>language or technology best suited for it</strong>, making it clear which stack to
+          use for each part of the system. Perfect for interviews and technical assessments.</p>
+      </div>
+    </section>
+
+    <!-- System Architecture Section -->
+    <section class="section">
+      <h2>🏗️ System Architecture</h2>
+      <p style="color: #666; margin-bottom: 20px;">Complete end-to-end flow from social media message to CRM sync.</p>
+
+      <div class="flow-diagram">
+        <div class="flow-step">
+          <strong>📱 Social Media</strong><br>
+          Message arrives<br>
+          <small>(Instagram, Twitter)</small>
+        </div>
+        <div class="flow-arrow">→</div>
+        <div class="flow-step ai">
+          <strong>🤖 AI Agents</strong><br>
+          Score lead<br>
+          Generate reply
+        </div>
+        <div class="flow-arrow">→</div>
+        <div class="flow-step data">
+          <strong>💾 Data Layer</strong><br>
+          Store & cache<br>
+          PostgreSQL, Redis
+        </div>
+        <div class="flow-arrow">→</div>
+        <div class="flow-step">
+          <strong>🔄 CRM Sync</strong><br>
+          HubSpot, Salesforce<br>
+          <small>(Bidirectional)</small>
+        </div>
+      </div>
+
+      <div class="grid-3">
+        <div class="agent-card">
+          <h4>Listener Agent</h4>
+          <p>Monitors social channels, extracts entities, routes by priority</p>
+        </div>
+        <div class="agent-card">
+          <h4>Lead Scorer Agent</h4>
+          <p>ML-based classification, sentiment analysis, purchase intent detection</p>
+        </div>
+        <div class="agent-card">
+          <h4>Response Agent</h4>
+          <p>GPT-4 powered replies with confidence scoring and human review</p>
+        </div>
+        <div class="agent-card">
+          <h4>CRM Sync Agent</h4>
+          <p>ETL pipeline, change detection, conflict resolution, audit trails</p>
+        </div>
+        <div class="agent-card">
+          <h4>Analytics Agent</h4>
+          <p>Dashboard generation, predictive models, performance insights</p>
+        </div>
+        <div class="agent-card">
+          <h4>Notification Agent</h4>
+          <p>Email alerts, SMS notifications, push notifications to teams</p>
+        </div>
+      </div>
+    </section>
+
+    <!-- Data Flow Section -->
+    <section class="section">
+      <h2>🔄 Frontend → Backend → AI Data Flow</h2>
+
+      <div class="grid-2">
+        <div>
+          <h3 style="color: #667eea; margin-bottom: 15px;">User Interaction (Frontend)</h3>
+          <div class="timeline">
+            <div class="timeline-item">
+              <div class="timeline-time">1. User Login</div>
+              <div class="timeline-title">Company Dashboard</div>
+              <div class="timeline-desc">OAuth 2.0 authentication with JWT tokens</div>
+            </div>
+            <div class="timeline-item">
+              <div class="timeline-time">2. Connect Social</div>
+              <div class="timeline-title">Authorization</div>
+              <div class="timeline-desc">Connect Instagram/Facebook via OAuth</div>
+            </div>
+            <div class="timeline-item">
+              <div class="timeline-time">3. View Dashboard</div>
+              <div class="timeline-title">Real-time Updates</div>
+              <div class="timeline-desc">WebSocket pushes live message feed</div>
+            </div>
+            <div class="timeline-item">
+              <div class="timeline-time">4. Review Replies</div>
+              <div class="timeline-title">Human Review Queue</div>
+              <div class="timeline-desc">Approve/reject AI-generated responses</div>
+            </div>
+          </div>
+        </div>
+
+        <div>
+          <h3 style="color: #667eea; margin-bottom: 15px;">Backend Processing</h3>
+          <div class="timeline">
+            <div class="timeline-item">
+              <div class="timeline-time">1. Receive Webhook</div>
+              <div class="timeline-title">Social Media Event</div>
+              <div class="timeline-desc">New comment/DM from Meta API</div>
+            </div>
+            <div class="timeline-item">
+              <div class="timeline-time">2. Queue Message</div>
+              <div class="timeline-title">RabbitMQ (Async)</div>
+              <div class="timeline-desc">FIFO guarantee, dead-letter queue</div>
+            </div>
+            <div class="timeline-item">
+              <div class="timeline-time">3. Process Agents</div>
+              <div class="timeline-title">Parallel Execution</div>
+              <div class="timeline-desc">Score + Generate response + Enrich data</div>
+            </div>
+            <div class="timeline-item">
+              <div class="timeline-time">4. Store Results</div>
+              <div class="timeline-title">Database</div>
+              <div class="timeline-desc">PostgreSQL + MongoDB audit logs</div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Security Section -->
+    <section class="section">
+      <h2>🔐 Security & Authentication</h2>
+
+      <div class="grid-2">
+        <div>
+          <h3 style="color: #667eea; margin-bottom: 15px; font-size: 16px;">Authentication</h3>
+          <div style="background: #f9f9f9; padding: 15px; border-radius: 8px;">
+            <div style="margin-bottom: 15px;">
+              <strong>OAuth 2.0</strong>
+              <p style="color: #666; font-size: 13px; margin-top: 5px;">Company login via email/password or SSO</p>
+            </div>
+            <div style="margin-bottom: 15px;">
+              <strong>JWT Tokens</strong>
+              <p style="color: #666; font-size: 13px; margin-top: 5px;">15-min access + 7-day refresh tokens</p>
+            </div>
+            <div style="margin-bottom: 15px;">
+              <strong>MFA</strong>
+              <p style="color: #666; font-size: 13px; margin-top: 5px;">TOTP/SMS required for admin accounts</p>
+            </div>
+            <div>
+              <strong>Rate Limiting</strong>
+              <p style="color: #666; font-size: 13px; margin-top: 5px;">1000 req/min per user, 100 req/min per IP</p>
+            </div>
+          </div>
+        </div>
+
+        <div>
+          <h3 style="color: #667eea; margin-bottom: 15px; font-size: 16px;">Data Protection</h3>
+          <div style="background: #f9f9f9; padding: 15px; border-radius: 8px;">
+            <div style="margin-bottom: 15px;">
+              <strong>At Rest</strong>
+              <p style="color: #666; font-size: 13px; margin-top: 5px;">AES-256 encryption, database TDE enabled</p>
+            </div>
+            <div style="margin-bottom: 15px;">
+              <strong>In Transit</strong>
+              <p style="color: #666; font-size: 13px; margin-top: 5px;">HTTPS/TLS 1.3, certificate pinning</p>
+            </div>
+            <div style="margin-bottom: 15px;">
+              <strong>GDPR Compliant</strong>
+              <p style="color: #666; font-size: 13px; margin-top: 5px;">Data deletion, portability, consent tracking</p>
+            </div>
+            <div>
+              <strong>Audit Trail</strong>
+              <p style="color: #666; font-size: 13px; margin-top: 5px;">100% logging, 2-year retention</p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Cost Optimization Section -->
+    <section class="section">
+      <h2>💰 Cost Optimization</h2>
+
+      <div class="stats-grid">
+        <div class="stat-box">
+          <div class="stat-number">70%</div>
+          <div class="stat-label">Cost Savings</div>
+        </div>
+        <div class="stat-box">
+          <div class="stat-number">$0.003</div>
+          <div class="stat-label">Per Message</div>
+        </div>
+        <div class="stat-box">
+          <div class="stat-number">60%</div>
+          <div class="stat-label">Cache Hit Rate</div>
+        </div>
+        <div class="stat-box">
+          <div class="stat-number">$2.90</div>
+          <div class="stat-label">Per Customer</div>
+        </div>
+      </div>
+
+      <div style="margin-top: 20px;">
+        <h3 style="color: #333; margin-bottom: 15px; font-size: 16px;">Optimization Strategies</h3>
+        <div style="background: #f9f9f9; padding: 15px; border-radius: 8px;">
+          <div style="margin-bottom: 15px; padding-bottom: 15px; border-bottom: 1px solid #eee;">
+            <strong>1. Model Tiering</strong>
+            <p style="color: #666; font-size: 13px; margin-top: 5px;">Use GPT-3.5 for simple responses, GPT-4 only for
+              complex ones → 20% savings</p>
+          </div>
+          <div style="margin-bottom: 15px; padding-bottom: 15px; border-bottom: 1px solid #eee;">
+            <strong>2. Response Caching</strong>
+            <p style="color: #666; font-size: 13px; margin-top: 5px;">24-hour Redis cache for similar messages → 30% API
+              reduction</p>
+          </div>
+          <div style="margin-bottom: 15px; padding-bottom: 15px; border-bottom: 1px solid #eee;">
+            <strong>3. Batch Processing</strong>
+            <p style="color: #666; font-size: 13px; margin-top: 5px;">Score 100 leads in 1 batch vs sequentially → 25%
+              compute savings</p>
+          </div>
+          <div>
+            <strong>4. Off-Peak Scheduling</strong>
+            <p style="color: #666; font-size: 13px; margin-top: 5px;">Schedule heavy operations 2-6am UTC on spot
+              instances → 15% savings</p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Failure Handling Section -->
+    <section class="section">
+      <h2>⚠️ Failure Scenarios & Recovery</h2>
+
+      <div class="grid-2">
+        <div>
+          <h3 style="color: #667eea; margin-bottom: 15px; font-size: 16px;">Scenario 1: LLM Timeout</h3>
+          <div style="background: #fff5e6; border-left: 4px solid #ff9800; padding: 15px; border-radius: 8px;">
+            <div style="margin-bottom: 10px;">
+              <strong style="color: #333;">Problem</strong>
+              <p style="color: #666; font-size: 13px; margin-top: 5px;">GPT-4 API doesn't respond within 30 seconds</p>
+            </div>
+            <div>
+              <strong style="color: #333;">Recovery</strong>
+              <ol style="color: #666; font-size: 13px; margin-top: 5px; margin-left: 15px;">
+                <li>Check Redis cache for similar message</li>
+                <li>Fall back to GPT-3.5 (faster)</li>
+                <li>Use template-based response</li>
+                <li>Queue for human review</li>
+              </ol>
+            </div>
+          </div>
+        </div>
+
+        <div>
+          <h3 style="color: #667eea; margin-bottom: 15px; font-size: 16px;">Scenario 2: CRM API Down</h3>
+          <div style="background: #e8f5e9; border-left: 4px solid #4caf50; padding: 15px; border-radius: 8px;">
+            <div style="margin-bottom: 10px;">
+              <strong style="color: #333;">Problem</strong>
+              <p style="color: #666; font-size: 13px; margin-top: 5px;">HubSpot returns 503 Service Unavailable</p>
+            </div>
+            <div>
+              <strong style="color: #333;">Recovery</strong>
+              <ol style="color: #666; font-size: 13px; margin-top: 5px; margin-left: 15px;">
+                <li>Retry with exponential backoff (1,2,4,8,16s)</li>
+                <li>Max 5 attempts, then queue to DLQ</li>
+                <li>Alert ops team</li>
+                <li>Auto-retry after 1 hour</li>
+              </ol>
+            </div>
+          </div>
+        </div>
+
+        <div>
+          <h3 style="color: #667eea; margin-bottom: 15px; font-size: 16px;">Scenario 3: DB Connection Pool Exhausted
+          </h3>
+          <div style="background: #f3e5f5; border-left: 4px solid #9c27b0; padding: 15px; border-radius: 8px;">
+            <div style="margin-bottom: 10px;">
+              <strong style="color: #333;">Problem</strong>
+              <p style="color: #666; font-size: 13px; margin-top: 5px;">PostgreSQL connection pool at max (100/100)</p>
+            </div>
+            <div>
+              <strong style="color: #333;">Recovery</strong>
+              <ol style="color: #666; font-size: 13px; margin-top: 5px; margin-left: 15px;">
+                <li>Kill idle connections (>30 min)</li>
+                <li>Route queries to read replica</li>
+                <li>Temporarily increase pool size</li>
+                <li>Auto-scale infrastructure</li>
+              </ol>
+            </div>
+          </div>
+        </div>
+
+        <div>
+          <h3 style="color: #667eea; margin-bottom: 15px; font-size: 16px;">Scenario 4: Social Media Webhook Down</h3>
+          <div style="background: #e1f5fe; border-left: 4px solid #03a9f4; padding: 15px; border-radius: 8px;">
+            <div style="margin-bottom: 10px;">
+              <strong style="color: #333;">Problem</strong>
+              <p style="color: #666; font-size: 13px; margin-top: 5px;">Meta Graph API webhook fails, messages not
+                delivered</p>
+            </div>
+            <div>
+              <strong style="color: #333;">Recovery</strong>
+              <ol style="color: #666; font-size: 13px; margin-top: 5px; margin-left: 15px;">
+                <li>Automatic fallback to polling (5-min interval)</li>
+                <li>Fetch missed messages retroactively</li>
+                <li>Persist to message queue</li>
+                <li>Process in correct order</li>
+              </ol>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div style="margin-top: 30px; background: #f0f4ff; padding: 20px; border-radius: 8px;">
+        <h3 style="color: #667eea; margin-bottom: 15px;">Resilience Guarantees</h3>
+        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 20px;">
+          <div>
+            <strong style="color: #333;">RTO (Recovery Time Objective)</strong>
+            <p style="color: #666; font-size: 13px; margin-top: 5px;">Most issues: &lt; 5 minutes | Critical: &lt; 1
+              minute</p>
+          </div>
+          <div>
+            <strong style="color: #333;">RPO (Recovery Point Objective)</strong>
+            <p style="color: #666; font-size: 13px; margin-top: 5px;">Zero data loss (persistent queues + backups)</p>
+          </div>
+          <div>
+            <strong style="color: #333;">Uptime SLA</strong>
+            <p style="color: #666; font-size: 13px; margin-top: 5px;">99.95% (21.9 min/month max downtime)</p>
+          </div>
+          <div>
+            <strong style="color: #333;">Circuit Breaker</strong>
+            <p style="color: #666; font-size: 13px; margin-top: 5px;">Open after 5 failures, retry after 60s</p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Implementation Section -->
+    <section class="section">
+      <h2>🛠️ Tech Stack & Implementation</h2>
+
+      <div class="grid-3">
+        <div>
+          <h3 style="color: #667eea; margin-bottom: 15px; font-size: 16px;">Frontend</h3>
+          <ul style="list-style: none; color: #666; font-size: 13px; line-height: 2;">
+            <li>✓ Next.js 14 (React)</li>
+            <li>✓ TailwindCSS (Styling)</li>
+            <li>✓ Socket.io (Real-time)</li>
+            <li>✓ Redux Toolkit (State)</li>
+            <li>✓ Recharts (Analytics)</li>
+          </ul>
+        </div>
+
+        <div>
+          <h3 style="color: #667eea; margin-bottom: 15px; font-size: 16px;">Backend</h3>
+          <ul style="list-style: none; color: #666; font-size: 13px; line-height: 2;">
+            <li>✓ Node.js + TypeScript</li>
+            <li>✓ Express/Fastify</li>
+            <li>✓ PostgreSQL (ORM: Prisma)</li>
+            <li>✓ Redis (Cache)</li>
+            <li>✓ RabbitMQ (Queues)</li>
+          </ul>
+        </div>
+
+        <div>
+          <h3 style="color: #667eea; margin-bottom: 15px; font-size: 16px;">Infrastructure</h3>
+          <ul style="list-style: none; color: #666; font-size: 13px; line-height: 2;">
+            <li>✓ Kubernetes (EKS/AKS)</li>
+            <li>✓ Docker (Containerization)</li>
+            <li>✓ AWS/Azure (Multi-cloud)</li>
+            <li>✓ Prometheus + Grafana</li>
+            <li>✓ ELK Stack (Logs)</li>
+          </ul>
+        </div>
+      </div>
+    </section>
+
+    <!-- Live Message Feed -->
+    <section class="section">
+      <h2>💬 Live Message Processing Example</h2>
+
+      <div class="message-list">
+        <div class="message-item">
+          <div class="message-content">
+            <div class="message-text">📱 Instagram comment: "I need help with API integration"</div>
+            <div class="message-meta">2 minutes ago • @techcompany</div>
+          </div>
+          <div style="text-align: right;">
+            <span class="status-badge status-hot">HOT</span>
+          </div>
+        </div>
+
+        <div class="message-item">
+          <div class="message-content">
+            <div class="message-text">🤖 Lead Scored: 87/100 | Sentiment: Positive | Intent: High</div>
+            <div class="message-meta">1.2 seconds • AI Processing</div>
+          </div>
+          <div style="text-align: right;">
+            <span class="status-badge" style="background: #4caf50; color: white;">PROCESSED</span>
+          </div>
+        </div>
+
+        <div class="message-item">
+          <div class="message-content">
+            <div class="message-text">💬 Reply: "Great question! Our API docs are at /docs. Need help? Reply with
+              details."</div>
+            <div class="message-meta">4.5 seconds • GPT-4 Generated (92% confidence)</div>
+          </div>
+          <div style="text-align: right;">
+            <span class="status-badge" style="background: #2196f3; color: white;">AUTO-POST</span>
+          </div>
+        </div>
+
+        <div class="message-item">
+          <div class="message-content">
+            <div class="message-text">🔄 CRM Sync: Contact created in HubSpot | Deal created | Sales rep assigned</div>
+            <div class="message-meta">3.2 seconds • Bidirectional sync complete</div>
+          </div>
+          <div style="text-align: right;">
+            <span class="status-badge" style="background: #ff9800; color: white;">SYNCED</span>
+          </div>
+        </div>
+
+        <div class="message-item">
+          <div class="message-content">
+            <div class="message-text">📧 Notification: Sales team alerted • "Hot lead from Instagram"</div>
+            <div class="message-meta">Email, SMS, and in-app push sent</div>
+          </div>
+          <div style="text-align: right;">
+            <span class="status-badge" style="background: #4caf50; color: white;">NOTIFIED</span>
+          </div>
+        </div>
+      </div>
+
+      <div
+        style="margin-top: 20px; background: #e8f5e9; padding: 15px; border-radius: 8px; border-left: 4px solid #4caf50;">
+        <strong style="color: #2e7d32;">⏱️ Total Processing Time: 15.4 seconds</strong>
+        <p style="color: #558b2f; font-size: 13px; margin-top: 5px;">From message arrival to CRM sync completion,
+          including human review queue</p>
+      </div>
+    </section>
+
+    <!-- System Architecture Diagram with Languages -->
+    <section class="section">
+      <h2>🎨 Complete System Diagram with Languages</h2>
+      <p style="color: #666; margin-bottom: 20px;">Full architecture showing frontend, backend, AI agents, databases,
+        and integrations with recommended tech stack.</p>
+
+      <div
+        style="background: #f5f5f5; padding: 25px; border-radius: 10px; margin-top: 20px; font-family: 'Courier New', monospace; overflow-x: auto;">
+        <pre style="font-size: 12px; line-height: 1.6; color: #333;">
+┌─────────────────────────────────────────────────────────────────────────┐
+│                    📱 FRONTEND LAYER (JavaScript/React)                 │
+│  ┌─────────────────┐  ┌──────────────────┐  ┌──────────────────────┐  │
+│  │ Web Dashboard   │  │ Mobile App       │  │ Admin Console        │  │
+│  │ React.js        │  │ React Native     │  │ TailwindCSS + Redux  │  │
+│  │ Socket.io       │  │ TailwindCSS      │  │ Zustand Stores       │  │
+│  └─────────────────┘  └──────────────────┘  └──────────────────────┘  │
+│         ↓ HTTPS/TLS 1.3 (Real-time WebSocket @ 100ms)                 │
+└─────────────────────────────────────────────────────────────────────────┘
+                              ↓
+┌─────────────────────────────────────────────────────────────────────────┐
+│       ⚙️  BACKEND LAYER (Node.js/Express or Python/FastAPI)           │
+├─────────────────────────────────────────────────────────────────────────┤
+│  ┌──────────────────┐  ┌──────────────────┐  ┌──────────────────────┐ │
+│  │ API Service      │  │ Auth Service      │  │ Message Service      │ │
+│  │ Express/Fastapi  │  │ Node.js/Python    │  │ Webhook Receiver     │ │
+│  │ TypeScript/Py    │  │ JWT + OAuth 2.0   │  │ RabbitMQ Publisher   │ │
+│  └──────────────────┘  └──────────────────┘  └──────────────────────┘ │
+│                                                                          │
+│  ┌──────────────────┐  ┌──────────────────┐  ┌──────────────────────┐ │
+│  │ CRM Sync Service │  │ Lead Scorer Svc  │  │ Response Gen Svc     │ │
+│  │ Node.js/Python   │  │ Python + XGBoost │  │ Python + LangChain   │ │
+│  │ HubSpot, SFDC    │  │ ML Model Serving │  │ OpenAI GPT-5-mini    │ │
+│  └──────────────────┘  └──────────────────┘  └──────────────────────┘ │
+│         ↓ Prisma/SQLAlchemy ORM                                         │
+│         ↓ Connection Pooling                                            │
+└─────────────────────────────────────────────────────────────────────────┘
+                              ↓
+┌─────────────────────────────────────────────────────────────────────────┐
+│           🤖 AI LAYER (Python + PyTorch/TensorFlow)                    │
+├─────────────────────────────────────────────────────────────────────────┤
+│  ┌──────────────┐  ┌──────────────┐  ┌──────────────┐  ┌────────────┐ │
+│  │ Listener     │  │ Lead Scorer  │  │ Response Gen │  │ Analyzer   │ │
+│  │ Python v3.11 │  │ XGBoost      │  │ GPT-5-mini   │  │ TensorFlow │ │
+│  │ Entity Extr. │  │ Accuracy:92% │  │ Confidence   │  │ Predictive │ │
+│  │ NLP library  │  │ 87/100 score │  │ scoring      │  │ Models     │ │
+│  └──────────────┘  └──────────────┘  └──────────────┘  └────────────┘ │
+│                                                                          │
+│  LangChain Framework: Orchestration of all AI operations               │
+│  Redis Cache: 60% hit rate (avoid repeated LLM calls)                 │
+└─────────────────────────────────────────────────────────────────────────┘
+                              ↓ Message Queuing
+┌─────────────────────────────────────────────────────────────────────────┐
+│  🔄 MESSAGE QUEUE (RabbitMQ - FIFO Delivery Guaranteed)                │
+│                                                                          │
+│  Topics: "social.messages" → "leads.scored" → "crm.sync.complete"     │
+│  Dead Letter Queue: Retry failed messages (1h, 7 days max)             │
+└─────────────────────────────────────────────────────────────────────────┘
+                              ↓
+┌─────────────────────────────────────────────────────────────────────────┐
+│              💾 DATA LAYER (PostgreSQL, MongoDB, Redis)                │
+├─────────────────────────────────────────────────────────────────────────┤
+│  ┌──────────────────┐  ┌──────────────────┐  ┌─────────────────────┐  │
+│  │ PostgreSQL (RDS) │  │ MongoDB (Audit)  │  │ Redis (Cache)       │  │
+│  │ Structured data: │  │ Event logs:      │  │ Real-time cache:    │  │
+│  │ Companies        │  │ All API calls    │  │ Sessions (24h TTL)  │  │
+│  │ Leads (verified) │  │ CRM sync events  │  │ Responses (60% hits)│  │
+│  │ Responses        │  │ Audit trail      │  │ User profiles       │  │
+│  │ Users            │  │ 2-year retention │  │ Lead scores         │  │
+│  │ AES-256 encrypt  │  │ Indexed queries  │  │ Social auth tokens  │  │
+│  └──────────────────┘  └──────────────────┘  └─────────────────────┘  │
+│                                                                          │
+│  ┌──────────────────┐  ┌──────────────────┐                            │
+│  │ InfluxDB (Time) │  │ S3/Blob Storage  │                            │
+│  │ Metrics: 1s     │  │ Message archival │                            │
+│  │ Latency, Cache  │  │ > 1 year old     │                            │
+│  │ Model times     │  │ Compliance hold  │                            │
+│  └──────────────────┘  └──────────────────┘                            │
+│                                                                          │
+│  Total Storage: ~500GB/month (auto-archival to S3)                    │
+│  Backup: Daily + WAL (recovery in < 30min)                            │
+└─────────────────────────────────────────────────────────────────────────┘
+                              ↓↑ API Integration
+┌─────────────────────────────────────────────────────────────────────────┐
+│        🔗 EXTERNAL INTEGRATIONS (REST/Webhook, OAuth 2.0)             │
+├─────────────────────────────────────────────────────────────────────────┤
+│  Social Media ────→ ┌─────────────────────┐ ←──── CRM Systems         │
+│  ├─ Instagram      │   AI Agent Platform  │      ├─ HubSpot         │
+│  ├─ Twitter/X      │   (Our Backend)      │      ├─ Salesforce      │
+│  ├─ LinkedIn       │   Message Process    │      ├─ Pipedrive       │
+│  └─ TikTok         └─────────────────────┘      └─ Zoho             │
+│                                                                          │
+│  LLM Providers ────────────────→ Support Services                     │
+│  ├─ OpenAI GPT-5-mini           ├─ Auth0 (OAuth)                     │
+│  ├─ Claude 3 (fallback)         ├─ Twilio (SMS)                      │
+│  └─ Fine-tuned models           ├─ SendGrid (Email)                  │
+│     (on-prem option)            └─ Stripe (Billing)                  │
+└─────────────────────────────────────────────────────────────────────────┘
+                              ↓↑ Observability
+┌─────────────────────────────────────────────────────────────────────────┐
+│        📊 MONITORING STACK (Prometheus, Grafana, ELK)                  │
+│                                                                          │
+│  ├─ Prometheus: Scrape metrics every 15s                              │
+│  ├─ Grafana: Real-time dashboards (uptime, latency, errors)          │
+│  ├─ ELK Stack: Centralized logging (1TB/month)                        │
+│  ├─ Jaeger: Distributed tracing (service-to-service)                 │
+│  ├─ DataDog: APM + custom metrics                                     │
+│  └─ PagerDuty: Alert routing (critical → SMS)                         │
+│                                                                          │
+│  SLA Targets:                                                          │
+│  ✓ 99.95% uptime (52 minutes downtime/year)                           │
+│  ✓ Response time P99 < 5 seconds                                       │
+│  ✓ Error rate < 0.1%                                                   │
+│  ✓ Lead scoring accuracy 92%                                           │
+└─────────────────────────────────────────────────────────────────────────┘
+
+KEY TECHNOLOGIES BY COMPONENT:
+═════════════════════════════════════════════════════════════════════════
+
+Frontend:        TypeScript | React.js | TailwindCSS | Redux | Socket.io
+Backend:         Node.js/Python | Express/FastAPI | Prisma | RabbitMQ
+AI Layer:        Python 3.11 | PyTorch | TensorFlow | LangChain | sci-kit
+LLM/Models:      OpenAI GPT-5-mini | Claude 3 | XGBoost | sentence-transformers
+Databases:       PostgreSQL | MongoDB | Redis | InfluxDB | S3
+Infrastructure:  Kubernetes | Docker | Terraform | GitHubActions | AWS/Azure
+Observability:   Prometheus | Grafana | ELK | Jaeger | DataDog
+</pre>
+      </div>
+
+      <div
+        style="margin-top: 20px; background: #f3e5f5; padding: 15px; border-radius: 8px; border-left: 4px solid #9c27b0;">
+        <strong style="color: #6a1b9a;">💡 Implementation Approach:</strong>
+        <p style="color: #4a148c; font-size: 13px; margin-top: 8px;">
+          • <strong>Phase 1:</strong> Build backend microservices (Node.js/Python) with API contracts<br>
+          • <strong>Phase 2:</strong> Integrate LLM layer (Python FastAPI + LangChain)<br>
+          • <strong>Phase 3:</strong> Deploy frontend (React + Socket.io for real-time)<br>
+          • <strong>Phase 4:</strong> Add monitoring & auto-scaling (Kubernetes)<br>
+          • <strong>Phase 5:</strong> CRM integrations (HubSpot, Salesforce OAuth)
+        </p>
+      </div>
+    </section>
+
+    <!-- Footer -->
+    <footer>
+      <p>🚀 AI Agent System Design | Production-Ready Architecture | 99.95% Uptime SLA</p>
+      <p style="margin-top: 10px; opacity: 0.8;">© 2026 AI Agent Platform Assessment</p>
+    </footer>
+  </div>
+
+  <script>
+    // Simulate real-time metric updates
+    function updateMetrics() {
+      const metrics = document.querySelectorAll('.metric-value');
+      metrics.forEach(metric => {
+        const current = parseInt(metric.textContent);
+        if (current > 0 && Math.random() > 0.7) {
+          const change = Math.floor(Math.random() * 20) - 10;
+          metric.textContent = Math.max(0, current + change);
+        }
+      });
+    }
+
+    setInterval(updateMetrics, 3000);
+
+    // Add smooth scroll
+    document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+      anchor.addEventListener('click', function (e) {
+        e.preventDefault();
+        const target = document.querySelector(this.getAttribute('href'));
+        if (target) {
+          target.scrollIntoView({ behavior: 'smooth' });
+        }
+      });
+    });
+  </script>
+</body>
+
+</html>
